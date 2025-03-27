@@ -7,9 +7,10 @@ def generate_launch_description():
     """Generate launch description with multiple components."""
 
     static_tf_publisher = Node(
+        name="static1",
         package="tf2_ros",
         executable="static_transform_publisher",
-        arguments=["0.1", "0.0", "-0.05", "-0.3827", "0", "0", "0.9239", "base_link", "zed_camera_link"],
+        arguments=["0.1", "0.0", "-0.05", "0", "0.785", "0", "base_link", "zed_camera_link"],
         output="screen"
     )
 
