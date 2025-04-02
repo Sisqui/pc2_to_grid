@@ -26,7 +26,8 @@ setup(
         'console_scripts': [
             'pc2grid = pc2_to_grid.pc2grid:main',
             'pc2transform = pc2_to_grid.pc2_transform:main',
-            'map_saver = pc2_to_grid.map_saver:main'
+            'map_saver = pc2_to_grid.map_saver:main',
+            'pc2map_saver = pc2_to_grid.pc2map:main'
         ],
     },
 )

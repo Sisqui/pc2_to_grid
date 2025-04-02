@@ -8,12 +8,13 @@ def generate_launch_description():
 	return LaunchDescription([ 
 	        Node(
 	            package='pc2_to_grid',
-	            executable='map_saver',
-	            name='map_saver',
+	            executable='3dmap',
+	            name='pc2map_saver',
 	            output='screen',
 	            parameters=[
-	                {"map_topic": "/occupancy_grid_scan"},
-	                {"map_name": "/home/orin/my_map.png"},
+	                {"pc2_topic": "/bonxai_point_cloud_centers"},
+	                {"map_name": "/home/orin/my_3dmap.png"},
+                    {"rotation_angle": 45.0},
 	            ]
 	        )
 	    ])
