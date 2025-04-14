@@ -44,7 +44,8 @@ def generate_launch_description():
     )
 
 
-    return LaunchDescription([container, static_tf_publisher,
+    return LaunchDescription([
+        # container, static_tf_publisher,
         Node(
             package='pc2_to_grid',
             executable='pc2transform',

@@ -15,7 +15,8 @@ def generate_launch_description():
             output='screen',
             parameters=[{"filename": output_file}],
             remappings=[
-                ("/input", "/bonxai_point_cloud_centers")
+                # ("/input", "/bonxai_point_cloud_centers")
+                ("/input", "/zed/zed_node/mapping/fused_cloud")
             ]
         ),
 
