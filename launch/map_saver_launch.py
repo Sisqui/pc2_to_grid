@@ -12,8 +12,8 @@ def generate_launch_description():
 	            name='map_saver',
 	            output='screen',
 	            parameters=[
-	                {"map_topic": "/occupancy_grid_scan"},
-	                {"map_name": "/home/orin/my_map.png"},
+	                {"map_topic": "/mapUAV"},
+	                {"map_name": "/home/orin/my_map.pgm"},
 	            ]
 	        )
 	    ])

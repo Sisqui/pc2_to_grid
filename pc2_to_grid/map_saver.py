@@ -63,14 +63,16 @@ from rclpy.node import Node
 import numpy as np
 import cv2
 from nav_msgs.msg import OccupancyGrid
+from PIL import Image
+import os
 
 class MapSaver(Node):
     def __init__(self):
         super().__init__('map_saver')
         
         # Declare parameters with default values
-        self.declare_parameter("map_topic", "/occupancy_grid_scan")
-        self.declare_parameter("map_name", "my_map.png")
+        self.declare_parameter("map_topic", "/mapUAV")
+        self.declare_parameter("map_name", "my_map.pgm")
 
         # Get parameter values
         self.map_topic = self.get_parameter("map_topic").get_parameter_value().string_value
@@ -80,26 +82,34 @@ class MapSaver(Node):
 
     def listener_callback(self, msg):
         width, height = msg.info.width, msg.info.height
-        resolution = msg.info.resolution
-        origin = msg.info.origin.position
+        self.get_logger().info(f"Received map: width={width}, height={height}")
 
-        grid_data = np.array(msg.data, dtype=np.int8).reshape((height, width))
+        try:
+            grid_data = np.array(msg.data, dtype=np.int8).reshape((height, width))
 
-        # Convert to grayscale image (Unknown=-1, Free=0, Occupied=100)
-        image = np.zeros((height, width), dtype=np.uint8)
-        image[grid_data == -1] = 128  # Unknown
-        image[grid_data == 0] = 255   # Free space
-        image[grid_data == 100] = 0   # Occupied
+            # Create grayscale image based on occupancy values
+            image = np.zeros((height, width), dtype=np.uint8)
+            image[grid_data == -1] = 128  # Unknown
+            image[grid_data == 0] = 255   # Free
+            image[grid_data == 100] = 0   # Occupied
 
-        # Resize to low resolution (e.g., 25% of original size)
-        # scale_percent = 95
-        # new_width = int(width * scale_percent / 100)
-        # new_height = int(height * scale_percent / 100)
-        resized_image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
+            # Save using Pillow
+            map_path = os.path.join(os.path.expanduser("~"), "my_map.pgm")
+            img_pil = Image.fromarray(image)
 
-        # Save the map
-        cv2.imwrite(self.map_name, resized_image)
-        self.get_logger().info('Saved low-resolution map as my_map.png')
+            img_pil = img_pil.transpose(Image.FLIP_TOP_BOTTOM)
+
+            # scale_factor = 4
+            # new_size = (width * scale_factor, height * scale_factor)
+            # img_resized = img_pil.resize(new_size, resample=Image.NEAREST)
+            # img_resized.save(map_path)
+
+            img_pil.save(map_path, format='PPM') 
+
+            self.get_logger().info("✅ Map saved successfully!")
+
+        except Exception as e:
+            self.get_logger().error(f"🔥 Exception during map processing: {e}")
 
 def main(args=None):
     rclpy.init(args=args)

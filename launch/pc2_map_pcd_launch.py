@@ -5,7 +5,7 @@ from launch.actions import TimerAction, Shutdown
 
 
 def generate_launch_description():
-    output_file = os.path.expanduser("~/3dmap.pcd")
+    output_file = os.path.expanduser("/home/orin/my_3dmap.pcd")
 
     return LaunchDescription([
         Node(
@@ -21,7 +21,7 @@ def generate_launch_description():
         ),
 
         TimerAction(
-            period=1.0,
+            period=2.0,
             actions=[Shutdown()]
         )
     ])

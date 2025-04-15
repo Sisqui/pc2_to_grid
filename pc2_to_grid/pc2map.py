@@ -4,14 +4,15 @@ import numpy as np
 import cv2
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2
+import os
 
 class PointCloudToImage(Node):
     def __init__(self):
         super().__init__('pointcloud_to_image')
         
         # Declare parameters with default values
-        self.declare_parameter("pc2_topic", "/bonxai_point_cloud_centers")
-        self.declare_parameter("map_name", "my_3dmap.png")
+        self.declare_parameter("pc2_topic", "/zed/zed_node/mapping/fused_cloud")
+        self.declare_parameter("map_name", "/home/orin/my_3dmap.png")
         self.declare_parameter("rotation_angle", 45.0)
         self.declare_parameter("image_width", 640)
         self.declare_parameter("image_height", 480)
@@ -88,10 +89,28 @@ class PointCloudToImage(Node):
             valid = (x_img >= 0) & (x_img < self.image_size[0]) & \
                    (y_img >= 0) & (y_img < self.image_size[1])
             
-            image[y_img[valid], x_img[valid]] = colors[valid]
+            if np.any(valid):
+                xi = x_img[valid]
+                yi = y_img[valid]
+                col = colors[valid]
 
-            cv2.imwrite(self.map_name, image)
-            self.get_logger().info("Image saved successfully!")
+                # Make sure xi, yi, col all align
+                for x_px, y_px, color in zip(xi, yi, col):
+                    image[y_px, x_px] = color
+
+                print("Image type:", type(image))
+                print("Image dtype:", image.dtype)
+                print("Image shape:", image.shape)
+                full_path = os.path.expanduser(self.map_name)
+                dir_path = os.path.dirname(full_path)
+                if dir_path and not os.path.exists(dir_path):
+                    os.makedirs(dir_path)
+
+                success = cv2.imwrite(full_path, image)
+                if success:
+                    self.get_logger().info(f"✅ Image saved to {full_path}")
+                else:
+                    self.get_logger().error("❌ cv2.imwrite failed even though image looks valid!")
 
         except Exception as e:
             self.get_logger().error(f"Error processing point cloud: {str(e)}")
