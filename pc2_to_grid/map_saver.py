@@ -99,7 +99,7 @@ class MapSaver(Node):
 
             img_pil = img_pil.transpose(Image.FLIP_TOP_BOTTOM)
 
-            scale_factor = 4
+            scale_factor = 2
             new_size = (width * scale_factor, height * scale_factor)
             img_resized = img_pil.resize(new_size, resample=Image.NEAREST)
             img_resized.save(map_path, format='PPM')

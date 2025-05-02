@@ -8,8 +8,9 @@ def generate_launch_description():
     launch_args = [
         DeclareLaunchArgument('input_cloud_topic', default_value='/cloud_in'),
         DeclareLaunchArgument('resolution', default_value='0.15'),
-        DeclareLaunchArgument('frame_id', default_value='map'),
-        DeclareLaunchArgument('base_frame_id', default_value='base_footprint'),
+        DeclareLaunchArgument('frame_id', default_value='map_drone'),
+        # DeclareLaunchArgument('base_frame_id', default_value='base_footprint'),
+        DeclareLaunchArgument('base_frame_id', default_value='base_link_drone'),
         DeclareLaunchArgument('height_map', default_value='True'),
         DeclareLaunchArgument('colored_map', default_value='True'),
         DeclareLaunchArgument('color_factor', default_value='0.8'),
@@ -35,7 +36,7 @@ def generate_launch_description():
         DeclareLaunchArgument('color_free/a', default_value='1.0'),
         DeclareLaunchArgument('publish_free_space', default_value='False'),
 
-        DeclareLaunchArgument('map_frame', default_value='map'),
+        DeclareLaunchArgument('map_frame', default_value='map_drone'),
         DeclareLaunchArgument('minimum_z', default_value='1.0'),
         DeclareLaunchArgument('max_slope_ugv', default_value='0.1'),
         DeclareLaunchArgument('slope_estimation_size', default_value='2'),
@@ -51,7 +52,7 @@ def generate_launch_description():
         name="static1",
         package="tf2_ros",
         executable="static_transform_publisher",
-        arguments=["0.1", "0.0", "-0.05", "0", "0.785", "0", "base_link", "zed_camera_link"],
+        arguments=["0.1", "0.0", "-0.05", "0", "0.785", "0", "base_link_drone", "zed_camera_link"],
         output="screen"
     )
 
@@ -125,7 +126,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription(launch_args + [
-        static_tf_publisher,
+        # static_tf_publisher,
         voxel_filter,
         octomap_server,
         map_conversion_node
